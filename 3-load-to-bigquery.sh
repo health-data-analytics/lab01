@@ -37,18 +37,18 @@ create_bq_dataset
 load_data(){
     fileName=${i##*\/}
     tableName=${fileName%.ndjson}
-    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
-    echo "Loading data from file: $fileName to table: $tableName ... ... ... ... ..."
-    echo "bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName $i"
-    bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName "$i" > "logs/$fileName.log"
+    touch ./logs/$tableName.log
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> "logs/$tableName.log"
+    echo "Loading data from file: $fileName to table: $tableName ... ... ... ... ..." >> "logs/$tableName.log"
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> "logs/$tableName.log"
+    echo "bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName $i" >> "logs/$tableName.log"
+    bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName "$i" >> "logs/$tableName.log"
     
     if [ $? -gt 0 ] 
         then
-            cp logs/$fileName.log logs/$fileName-error.log
+            cp logs/$tableName.log logs/$tableName-error.log
     fi
-    rm logs/$fileName.log 
-
-    echo " "
+    rm logs/$tableName.log 
 }
 
 for i in $(gsutil ls $SOURCE_LOC)
