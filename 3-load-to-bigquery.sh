@@ -40,13 +40,13 @@ load_data(){
     echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     echo "Loading data from file: $fileName to table: $tableName ... ... ... ... ..."
     echo "bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName $i"
-    bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName "$i" > "$fileName.log"
+    bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName "$i" > "logs/$fileName.log"
     
     if [ $? -gt 0 ] 
         then
-            cp $fileName.log $fileName-error.log
+            cp logs/$fileName.log logs/$fileName-error.log
     fi
-    rm $fileName.log 
+    rm logs/$fileName.log 
 
     echo " "
 }
