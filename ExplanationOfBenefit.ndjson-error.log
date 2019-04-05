@@ -1,0 +1,12 @@
+
+BigQuery error in load operation: Error processing job
+'dp-workspace:bqjob_r67f407ffb48be0dc_00000169ef4cc464_1': Error while reading
+data, error message: Failed to parse JSON: Expected , or } after key:value pair;
+Could not parse value; Could not parse value; Could not parse value; Could not
+parse value; Could not parse value; Parser terminated before end of string
+Failure details:
+- ExplanationOfBenefit.ndjson: Error while reading data, error
+message: Failed to parse JSON: Expected , or } after key:value
+pair; Could not parse value; Could not parse value; Could not parse
+value; Could not parse value; Could not parse value; Parser
+terminated before end of string
