@@ -45,6 +45,6 @@ b. Upload newly created ndjson files to Cloud Storage: gs://hc-ds/ndjson/
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Command: gsutil cp {FileName}.ndjson  gs://hc-ds/ndjson/
 
 c. Run the loading script again:  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ ./3-load-to-bigquery.sh <<GCP PROJECT ID>>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$ ./3-load-to-bigquery.sh {GCP PROJECT ID}
 
 
