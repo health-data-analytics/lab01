@@ -42,9 +42,9 @@ cd ../synthea
 gsutil -q stat $SOURCE_LOC*.ndjson
 if [ $? -eq 0 ]; 
 then
-    gsutil rm -r $SOURCE_LOC
+    gsutil rm -r $SOURCE_LOC*.ndjson
 else
-    echo "$SOURCE_LOC does not exist."
+    echo "$SOURCE_LOC*.ndjson does not exist."
 fi
 
 gsutil -m cp ../test-data/fhir/*.ndjson $SOURCE_LOC

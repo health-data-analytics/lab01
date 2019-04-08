@@ -80,15 +80,16 @@ for i in $(gsutil ls $SOURCE_LOC)
 
 gsutil ls $SOURCE_LOC
 
-if [ ! -f "logs/*error.log" ]; then
+if ls ./logs/*error.log &>/dev/null;
+then
+    echo "---------------------------------------------------------------------------"
+    echo "Got  errors while loading test-data into Dataset: $BQ_DATASET !!!!"
+    echo "Examine following error files, update/delete records in the file and" 
+    echo "retry to fix the error."
+    ls -al logs/*error.log
+    echo "---------------------------------------------------------------------------"  
+else
     echo "---------------------------------------------------------------------------"
     echo "Script was successful in loading test-data into Dataset: $BQ_DATASET !!!!"
     echo "---------------------------------------------------------------------------"
-else
-    echo "---------------------------------------------------------------------------"
-    echo "Got  errors while loading test-data into Dataset: $BQ_DATASET !!!!"
-    echo "Examine the error files in directory: ./logs and update/delete records" 
-    echo "in the data file and retry to fix the error."
-    ls -al logs/*error.log
-    echo "---------------------------------------------------------------------------"   
 fi
