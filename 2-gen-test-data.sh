@@ -14,8 +14,44 @@
 # limitations under the License.
 
 # Author: Dharmesh Patel @ Google
+# ------------------------------------------------------------------------------------------
 # This script is used to generate FHIR STU3 resources in ndjson format.
 # Test FHIR STU3 test data will be generated in a directory: test-data.
 
-cd synthea
-./run
+if [ ! -d "../synthea" ] ; then
+    echo 'It seems the lab is not setup correctly......'
+    echo 'Please run ./1-setup.sh before running this script.....'
+    exit 1
+fi
+
+if [ $# -eq 0 ] ; then
+    echo 'Missing argument: Number of Patient records'
+    echo 'Usage: ./2-gen-test-data.sh <# of records>'
+    exit 1
+fi
+
+export SOURCE_LOC=gs://hc-ds/ndjson/
+
+if [ -d "../test-data" ]; then
+    rm -fr ../test-data
+fi
+
+cd ../synthea
+./run_synthea California -p $1
+
+gsutil -q stat $SOURCE_LOC*.ndjson
+if [ $? -eq 0 ]; 
+then
+    gsutil rm -r $SOURCE_LOC
+else
+    echo "$SOURCE_LOC does not exist."
+fi
+
+gsutil -m cp ../test-data/fhir/*.ndjson $SOURCE_LOC
+
+gsutil -q stat $SOURCE_LOC*.ndjson
+if [ $? -eq 0 ]; then
+    echo "---------------------------------------------------------------------"
+    echo "Script was successful in generating test-data for $1 patients!!!!"
+    echo "---------------------------------------------------------------------"
+fi

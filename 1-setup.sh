@@ -15,6 +15,7 @@
 # limitations under the License.
 
 # Author: Dharmesh Patel @ Google
+# ------------------------------------------------------------------------------------------
 # This script is used to setup Synthea Patient Generator for the codelab.
 # It download's Synthea Patient Generator code from Github.
 # Then it is configured to generate FHIR STU3 resources in ndjson format.
@@ -22,7 +23,21 @@
 # for generating new test data.
 
 cd ..
-git clone https://github.com/synthetichealth/synthea.git
-$ mv ./synthea/src/main/resources/synthea.properties ./synthea/src/main/resources/synthea.properties.old
-$ cp ./lab01/stu3.properties ./synthea/src/main/resources/
-mv ./synthea/src/main/resources/stu3.properties ./synthea/src/main/resources/synthea.properties
+if [ ! -d "synthea" ]; 
+    then
+        git clone https://github.com/synthetichealth/synthea.git
+        cd synthea
+        ./gradlew build check test
+    else
+        cd synthea
+fi
+
+mv ./src/main/resources/synthea.properties ./src/main/resources/synthea.properties.old
+cp ../lab01/stu3.properties ./src/main/resources/
+mv ./src/main/resources/stu3.properties ./src/main/resources/synthea.properties
+
+if [ -f "./src/main/resources/synthea.properties" ]; then 
+    echo "----------------------------------"
+    echo "Setup completed successfully!!!!"
+    echo "----------------------------------"
+fi
