@@ -24,13 +24,18 @@ if [ ! -d "../synthea" ] ; then
     exit 1
 fi
 
-if [ $# -eq 0 ] ; then
-    echo 'Missing argument: Number of Patient records'
+if [ -d "../test-data" ] ; then
+    echo 'Found previously generated test data. New test data will not be generated......'
+    echo "If you run this script second time and if test-data directory exist it will not generate test data again."
+    echo "If you want to generate new test data, delete the test-data directory and run this script again."
+    exit 0
+fi
+
+if [ $# -lt 1 ] ; then
+    echo 'Missing arguments..'
     echo 'Usage: ./2-gen-test-data.sh <# of records>'
     exit 1
 fi
-
-export SOURCE_LOC=gs://hc-ds/ndjson/
 
 if [ -d "../test-data" ]; then
     rm -fr ../test-data
@@ -39,18 +44,7 @@ fi
 cd ../synthea
 ./run_synthea California -p $1
 
-gsutil -q stat $SOURCE_LOC*.ndjson
-if [ $? -eq 0 ]; 
-then
-    gsutil rm -r $SOURCE_LOC*.ndjson
-else
-    echo "$SOURCE_LOC*.ndjson does not exist."
-fi
-
-gsutil -m cp ../test-data/fhir/*.ndjson $SOURCE_LOC
-
-gsutil -q stat $SOURCE_LOC*.ndjson
-if [ $? -eq 0 ]; then
+if [ -d "../test-data" ]; then
     echo "---------------------------------------------------------------------"
     echo "Script was successful in generating test-data for $1 patients!!!!"
     echo "---------------------------------------------------------------------"

@@ -26,45 +26,63 @@ if [ ! -d "../test-data" ] ; then
     exit 1
 fi
 
-if [[ $# -eq 0 ]] ; then
-    echo 'Missing argument: GCP Project ID'
-    echo 'Usage: ./3-load-to-bigquery.sh <GCP Project ID>'
+if [[ $# -lt 3 ]] ; then
+    echo 'Missing arguments..'
+    echo 'Usage: ./3-load-to-bigquery.sh <GCP Project ID> <gcs_bucket_name> <bq_dataset_name>'
     exit 1
 fi
 
-export SOURCE_LOC=gs://hc-ds/ndjson/*.ndjson
-export BQ_DATASET=$1:hc_dataset
+export SOURCE_LOC=gs://$2/ndjson
+export DATASET=$3
+export BQ_DATASET=$1:$DATASET
+
+gsutil mb -p $1 gs://$2
+if [ $? -eq 0 ]; 
+then
+    echo "GCS Bucket: $2 has been created.."
+    echo "Test data will be ingested in GCS Bucket: $2 "
+else
+    echo "Unable to create a GCS Bucket: $2. Please make sure bucket name is valid and it doesn't exist."
+    exit
+fi
+
+gsutil -m cp ../test-data/fhir/*.ndjson $SOURCE_LOC
+
+gsutil -q stat $SOURCE_LOC
+if [ $? -eq 0 ]; then
+    echo "---------------------------------------------------------------------------------"
+    echo "Script was successful in ingesting test-data into GCS Bucket for $1 patients!!!!"
+    echo "---------------------------------------------------------------------------------"
+fi
 
 create_bq_dataset() {
-    ds=$BQ_DATASET
-    exists=$(bq ls -d | grep -w $ds)
+    exists=$(bq ls -d | grep -w $DATASET)
+
     if [ -n "$exists" ] 
         then
-            echo "BigQuery dataset: $ds exists already."
+            echo "Unable to create a BQ Dataset $BQ_DATASET." 
+            echo "Please make sure Dataset name is valid and it doesn't exist."
+            exit
         else
-            echo "Creating a new dataset: $ds"
-            bq mk $ds
+            echo "Creating a new dataset: $BQ_DATASET"
+            bq mk $BQ_DATASET
     fi
 }
 
 load_data(){
     fileName=${i##*\/}
     tableName=${fileName%.ndjson}
-    bq show $BQ_DATASET.$tableName
-    if [ $? -ne 0 ]
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> "logs/$tableName.log"
+    echo "Loading data from file: $fileName to table: $tableName ... ... ... ... ... ... ... ..." >> "logs/$tableName.log"
+    echo "bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName $i" >> "logs/$tableName.log"
+    echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> "logs/$tableName.log"
+    bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName "$i" >> "logs/$tableName.log"
+
+    if [ $? -gt 0 ] 
         then
-            echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> "logs/$tableName.log"
-            echo "Loading data from file: $fileName to table: $tableName ... ... ... ... ... ... ... ..." >> "logs/$tableName.log"
-            echo "bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName $i" >> "logs/$tableName.log"
-            echo "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" >> "logs/$tableName.log"
-            bq load --autodetect --source_format=NEWLINE_DELIMITED_JSON  $BQ_DATASET.$tableName "$i" >> "logs/$tableName.log"
-        
-            if [ $? -gt 0 ] 
-                then
-                    cp logs/$tableName.log logs/$tableName-error.log
-            fi
-            rm logs/$tableName.log 
+            cp logs/$tableName.log logs/$tableName-error.log
     fi
+    rm logs/$tableName.log 
 }
 
 create_bq_dataset
@@ -75,17 +93,19 @@ fi
 
 for i in $(gsutil ls $SOURCE_LOC)
     do
-        load_data $i  &
+        load_data $i &
     done
 
-gsutil ls $SOURCE_LOC
-
+wait
 if ls ./logs/*error.log &>/dev/null;
 then
     echo "---------------------------------------------------------------------------"
-    echo "Got  errors while loading test-data into Dataset: $BQ_DATASET !!!!"
-    echo "Examine following error files, update/delete records in the file and" 
-    echo "retry to fix the error."
+    echo "Got  errors while loading test-data from: $SOURCE_LOC into BigQuery Dataset: $BQ_DATASET"
+    echo "You will have to resolve these errors manually:"
+    echo "1. Examine following error files and update/delete records in the ndjson files." 
+    echo "2. Delete GCS Bucker: $2 ; Delete BQ dataset: $BQ_DATASET and logs from previous run."
+    echo "3. Execute this script again with newer set of ndjson files."
+    echo " "
     ls -al logs/*error.log
     echo "---------------------------------------------------------------------------"  
 else

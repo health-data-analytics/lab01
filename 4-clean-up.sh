@@ -16,15 +16,15 @@
 # Author: Dharmesh Patel @ Google
 # This script is used to clean up the environment after you are done with the lab.
 
-if [[ $# -eq 0 ]]
+if [[ $# -lt 2 ]]
 then
     echo 'Missing argument: GCP Project ID'
-    echo 'Usage: ./4-clean-up.sh <GCP Project ID>'
+    echo 'Usage: ./4-clean-up.sh <GCP Project ID> <gcs_bucket_name> <bq_dataset_name>'
     exit 1
 fi
 
-export SOURCE_LOC=gs://hc-ds/ndjson/*.ndjson
-export BQ_DATASET=$1:hc_dataset
+export SOURCE_LOC=gs://$2/ndjson/*.ndjson
+export BQ_DATASET=$1:$3
 
 bq rm -r $BQ_DATASET
 gsutil rm -r $SOURCE_LOC

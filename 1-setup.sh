@@ -23,11 +23,23 @@
 # for generating new test data.
 
 cd ..
+
+# build synthea according to https://github.com/synthetichealth/synthea
+echo "Generating test data using Synthea. This script will build synthea only one time."
+echo "If you run this script second time and if synthea directory exist it will not build the synthea again."
+echo "If you want to rebuild synthea from scratch delete the synthea directory"
 if [ ! -d "synthea" ]; 
     then
         git clone https://github.com/synthetichealth/synthea.git
         cd synthea
         ./gradlew build check test
+        if [ $? -eq 0 ]; 
+          then
+            echo "Synthea build was successfully..."
+          else
+            echo "Failed to build Synthea, retry after sometime..."
+            rm -rf synthea
+        fi        
     else
         cd synthea
 fi
