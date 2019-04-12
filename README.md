@@ -47,7 +47,8 @@ a. Examine the error logs, fix the errors in the ndjson files.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Typically, deleting the line with error works.
 
 b. Delete GCS BUCKET, BigQuery Dataset and old log files  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Typically, deleting the line with error works.
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Typically, deleting the line with error works.  
+ 
 c. Run the loading script again:  
 ```bash
 ./3-load-to-bigquery.sh {GCP PROJECT ID} {GCS_BUCKET_NAME} {BQ_DATASET_NAME}
