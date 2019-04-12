@@ -46,16 +46,17 @@ Follow these steps to resolve the errors:
 a. Examine the error logs, fix the errors in the ndjson files.  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Typically, deleting the line with error works.
 
-b. Delete GCS BUCKET, BigQuery Dataset and old log files  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Typically, deleting the line with error works.  
+b. Delete GCS BUCKET, BigQuery Dataset and old log files from "../logs" directory. 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;If the error log files from previous run are not deleted the script may provide status. 
  
 c. Run the loading script again:  
 ```bash
 ./3-load-to-bigquery.sh {GCP PROJECT ID} {GCS_BUCKET_NAME} {BQ_DATASET_NAME}
-```
+```  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Re-running the script will create a new GCS bucket and a new BQ Dataset.
 
 ## Step 4: Clean up
-Run this script to delete BigQuery Dataset, GCS Bucket and other folders created in your local VM/Machine
+Run this script to delete everything...synthea folder, generated test data, BigQuery Dataset, GCS Bucket and log directory created in your local VM/Machine and your GCP PROJECT
 ```bash
 ./4-clean-up.sh {GCP PROJECT ID} {GCS_BUCKET_NAME} {BQ_DATASET_NAME}
 ```
