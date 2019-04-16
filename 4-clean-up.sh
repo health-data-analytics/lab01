@@ -14,9 +14,10 @@
 # limitations under the License.
 
 # Author: Dharmesh Patel @ Google
+# ------------------------------------------------------------------------------------------
 # This script is used to clean up the environment after you are done with the lab.
 
-if [[ $# -lt 2 ]]
+if [[ $# -lt 3 ]]
 then
     echo 'Missing argument: GCP Project ID'
     echo 'Usage: ./4-clean-up.sh <GCP Project ID> <gcs_bucket_name> <bq_dataset_name>'

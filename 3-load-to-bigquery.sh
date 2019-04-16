@@ -15,10 +15,9 @@
 
 # Author: Dharmesh Patel @ Google
 # ------------------------------------------------------------------------------------------
-# This script is used to load data from FHIR STU3 resources (ndjson files) to BigQuery
-# It will create a new dataset in BigQuery only if it does not exist. If a BigQuery dataset
-# already exists, it will add new tables to the existing dataset or append records to the 
-# existing tables.
+# This script will create a new bucket in Google Cloud Storage and upload data from 
+# FHIR STU3 resources (ndjson files) to the newly created bucket. It will then load data into BigQuery
+# It will create a new dataset in BigQuery. If a BigQuery dataset already exists, the script will fail
 
 if [ ! -d "../test-data" ] ; then
     echo 'It seems test-data files (ndjson) are missing or has not been created......'

@@ -17,14 +17,15 @@
 # Author: Dharmesh Patel @ Google
 # ------------------------------------------------------------------------------------------
 # This script is used to setup Synthea Patient Generator for the codelab.
-# It download's Synthea Patient Generator code from Github.
+# It download's and builds Synthea Patient Generator code from Github.
 # Then it is configured to generate FHIR STU3 resources in ndjson format.
-# This script will not generate the FHIR STU3 resources, but it is a pre-requisite
-# for generating new test data.
+# This script will not generate FHIR STU3 resources. 2nd Script: 2-gen-test-data.sh 
+# will generate the FHIR STU3 resources.
+# build synthea according to https://github.com/synthetichealth/synthea
 
 cd ..
 
-# build synthea according to https://github.com/synthetichealth/synthea
+
 echo "Generating test data using Synthea. This script will build synthea only one time."
 echo "If you run this script second time and if synthea directory exist it will not build the synthea again."
 echo "If you want to rebuild synthea from scratch delete the synthea directory"
