@@ -35,22 +35,32 @@ export SOURCE_LOC=gs://$2/ndjson
 export DATASET=$3
 export BQ_DATASET=$1:$DATASET
 
-gsutil mb -p $1 gs://$2
+create_a_bucket_in_gcs(){
+    gsutil mb -p $1 gs://$2
+    if [ $? -eq 0 ]; 
+    then
+        echo "Created a new GCS Bucket: $2 ......."
+    else
+        echo "Unable to create a GCS Bucket: $2. Please make sure bucket name is valid and it doesn't exist."
+        exit
+    fi
+}
+
+gsutil ls -b gs://$2
 if [ $? -eq 0 ]; 
-then
-    echo "GCS Bucket: $2 has been created.."
-    echo "Test data will be ingested in GCS Bucket: $2 "
-else
-    echo "Unable to create a GCS Bucket: $2. Please make sure bucket name is valid and it doesn't exist."
-    exit
+    then
+        echo "Using an existing GCS Bucket: gs://$2/ ......."
+    else
+        echo "Creating a new GCS Bucket: gs://$2/"
+        create_a_bucket_in_gcs
 fi
 
-gsutil -m cp ../test-data/fhir/*.ndjson $SOURCE_LOC
+echo "Test data will be ingested in GCS Bucket: $SOURCE_LOC ........."
 
-gsutil -q stat $SOURCE_LOC
+gsutil -m cp ../test-data/fhir/*.ndjson $SOURCE_LOC
 if [ $? -eq 0 ]; then
     echo "---------------------------------------------------------------------------------"
-    echo "Script was successful in ingesting test-data into GCS Bucket for $1 patients!!!!"
+    echo "Script was successful in ingesting test-data into GCS Bucket: $2 for $1 patients!!!!"
     echo "---------------------------------------------------------------------------------"
 fi
 
@@ -59,9 +69,7 @@ create_bq_dataset() {
 
     if [ -n "$exists" ] 
         then
-            echo "Unable to create a BQ Dataset $BQ_DATASET." 
-            echo "Please make sure Dataset name is valid and it doesn't exist."
-            exit
+            echo "Using an existing BQ Dataset: $BQ_DATASET." 
         else
             echo "Creating a new dataset: $BQ_DATASET"
             bq mk $BQ_DATASET
@@ -86,9 +94,10 @@ load_data(){
 
 create_bq_dataset
 
-if [ ! -d "logs" ]; then
-    mkdir logs
+if [ -d "logs" ]; then
+    rm -r logs
 fi
+mkdir logs
 
 for i in $(gsutil ls $SOURCE_LOC)
     do
