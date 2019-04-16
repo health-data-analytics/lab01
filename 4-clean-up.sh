@@ -23,11 +23,11 @@ then
     exit 1
 fi
 
-export SOURCE_LOC=gs://$2/ndjson/*.ndjson
+export GCS_BUCKET=gs://$2
 export BQ_DATASET=$1:$3
 
 bq rm -r $BQ_DATASET
-gsutil rm -r $SOURCE_LOC
+gsutil rm -r $GCS_BUCKET
 rm -r logs
 rm -r ../test-data
 rm -r ../synthea
