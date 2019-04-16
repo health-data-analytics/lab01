@@ -25,7 +25,6 @@
 
 cd ..
 
-
 echo "Generating test data using Synthea. This script will build synthea only one time."
 echo "If you run this script second time and if synthea directory exist it will not build the synthea again."
 echo "If you want to rebuild synthea from scratch delete the synthea directory"
@@ -36,18 +35,18 @@ if [ ! -d "synthea" ];
         ./gradlew build check test
         if [ $? -eq 0 ]; 
           then
+            mv ./src/main/resources/synthea.properties ./src/main/resources/synthea.properties.old
+            cp ../lab01/stu3.properties ./src/main/resources/
+            mv ./src/main/resources/stu3.properties ./src/main/resources/synthea.properties
             echo "Synthea build was successfully..."
           else
             echo "Failed to build Synthea, retry after sometime..."
-            rm -rf synthea
+            rm -rf ../synthea
+            exit
         fi        
     else
         cd synthea
 fi
-
-mv ./src/main/resources/synthea.properties ./src/main/resources/synthea.properties.old
-cp ../lab01/stu3.properties ./src/main/resources/
-mv ./src/main/resources/stu3.properties ./src/main/resources/synthea.properties
 
 if [ -f "./src/main/resources/synthea.properties" ]; 
   then 

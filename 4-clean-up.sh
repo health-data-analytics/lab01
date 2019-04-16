@@ -27,8 +27,8 @@ fi
 export GCS_BUCKET=gs://$2
 export BQ_DATASET=$1:$3
 
-bq rm -r $BQ_DATASET
-gsutil rm -r $GCS_BUCKET
+bq rm -r -f $BQ_DATASET
+gsutil -m rm -r $GCS_BUCKET
 rm -r logs
 rm -r ../test-data
 rm -r ../synthea
