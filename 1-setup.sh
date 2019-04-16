@@ -48,8 +48,13 @@ mv ./src/main/resources/synthea.properties ./src/main/resources/synthea.properti
 cp ../lab01/stu3.properties ./src/main/resources/
 mv ./src/main/resources/stu3.properties ./src/main/resources/synthea.properties
 
-if [ -f "./src/main/resources/synthea.properties" ]; then 
+if [ -f "./src/main/resources/synthea.properties" ]; 
+  then 
     echo "----------------------------------"
     echo "Setup completed successfully!!!!"
     echo "----------------------------------"
+  else
+    echo "----------------------------------"
+    echo "Setup failed"
+    echo "----------------------------------"      
 fi
