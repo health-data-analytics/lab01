@@ -52,7 +52,7 @@ if [ $? -eq 0 ];
         echo "Using an existing GCS Bucket: gs://$2/ ......."
     else
         echo "Creating a new GCS Bucket: gs://$2/"
-        create_a_bucket_in_gcs
+        create_a_bucket_in_gcs $1 $2
 fi
 
 echo "Test data will be ingested in GCS Bucket: $SOURCE_LOC ........."
