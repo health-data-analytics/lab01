@@ -111,7 +111,7 @@ then
     echo "Got  errors while loading test-data from: $SOURCE_LOC into BigQuery Dataset: $BQ_DATASET"
     echo "You will have to resolve these errors manually:"
     echo "1. Examine following error files and update/delete records in the ndjson files." 
-    echo "2. Delete GCS Bucker: $2 ; Delete BQ dataset: $BQ_DATASET and logs from previous run."
+    echo "2. Delete GCS Bucket: $2 ; Delete BQ dataset: $BQ_DATASET and logs from previous run."
     echo "3. Execute this script again with newer set of ndjson files."
     echo " "
     ls -al logs/*error.log
